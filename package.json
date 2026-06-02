@@ -9,6 +9,6 @@
     "postinstall": "npm run build"
   },
   "devDependencies": {
-    "tinymce": "^6.8.0"
+    "tinymce": "^7.2.0"
   }
 }
