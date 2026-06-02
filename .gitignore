@@ -34,10 +34,6 @@ temp/
 *.json.gz
 *.wiz
 
-# Dependencies
-vendor/
-node_modules/
-
 # Build artifacts
 dist/
 build/
