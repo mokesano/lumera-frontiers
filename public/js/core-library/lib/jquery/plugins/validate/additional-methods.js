@@ -260,15 +260,28 @@ jQuery.validator.addMethod("email2", function(value, element, param) {
 
 // same as url, but TLD is optional
 jQuery.validator.addMethod("url2", function(value, element, param) {
-	if (this.optional(element)) {
-		return true;
-	}
-	try {
-		var parsedUrl = new URL(value);
-		return /^(https?|ftp):$/i.test(parsedUrl.protocol);
-	} catch (e) {
-		return false;
-	}
+    if (this.optional(element)) return true;
+    // 1. Tetap gunakan regex utama (pola Anda yang sudah ada)
+    if (/^(https?|ftp):\/\/(...regex panjang...)$/i.test(value)) return true;
+    
+    // 2. JANGAN langsung new URL(). Malah tambahkan penjagaan ekstra:
+    //    - Hanya terima jika string diawali scheme:// (tanpa whitespace)
+    if (!/^(https?|ftp):\/\//i.test(value)) return false;
+    if (/\s/.test(value)) return false;  // tolak baris baru, spasi, dll.
+    
+    try {
+        var parsedUrl = new URL(value);
+        // 3. Pastikan hostname ada dan tidak kosong
+        if (!parsedUrl.hostname) return false;
+        // 4. Cegah canonicalization abuse: tolak jika URL asli berisi karakter berbahaya yang di-encode
+        if (/%[0-9A-Fa-f]{2}/.test(value) && value !== decodeURIComponent(value)) {
+            // Sudah mengandung encoded chars, mungkin hasil normalisasi
+            return false;
+        }
+        return /^(https?|ftp):$/i.test(parsedUrl.protocol);
+    } catch (e) {
+        return false;
+    }
 }, jQuery.validator.messages.url);
 
 // NOTICE: Modified version of Castle.Components.Validator.CreditCardValidator
