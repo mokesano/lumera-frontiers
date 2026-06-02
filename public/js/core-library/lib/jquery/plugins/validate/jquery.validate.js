@@ -998,15 +998,30 @@ $.extend($.validator, {
 
 		// http://docs.jquery.com/Plugins/Validation/Methods/url
 		url: function(value, element) {
-			// Avoid catastrophic backtracking from large RFC-style regex by using URL parsing.
-			if ( this.optional(element) ) {
+			// Kontribusi asli: Scott Gonzalez
+			// Regex panjang dipertahankan HANYA sebagai komentar atau referensi,
+			// karena dapat memicu catastrophic backtracking pada input tertentu.
+			// Sekarang kita gunakan URL parsing dengan guard ketat.
+
+			if (this.optional(element)) {
 				return true;
 			}
-			if ( /\s/.test(value) ) {
+
+			// 1. Tolak semua input yang mengandung whitespace (termasuk newline, tab)
+			if (/\s/.test(value)) {
 				return false;
 			}
+
+			// 2. Pastikan string DIAWALI dengan scheme:// (bukan scheme: saja)
+			//    Ini mencegah http:example.com lolos.
+			if (!/^(https?|ftp):\/\//i.test(value)) {
+				return false;
+			}
+
+			// 3. Gunakan new URL() hanya untuk memverifikasi bahwa URL valid secara struktural
 			try {
 				var parsed = new URL(value);
+				// Protokol harus http/https/ftp (setelah parsing, properti protocol mengandung titik dua)
 				return /^(https?|ftp):$/i.test(parsed.protocol);
 			} catch (e) {
 				return false;
