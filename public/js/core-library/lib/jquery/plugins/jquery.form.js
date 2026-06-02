@@ -320,8 +320,16 @@ $.fn.ajaxSubmit = function(options) {
 							xhr.responseText = (typeof pre.textContent !== 'undefined') ? pre.textContent : pre.innerText;
 					}
 				}
-				else if (opts.dataType == 'xml' && !xhr.responseXML && xhr.responseText != null) {
-					xhr.responseXML = toXml(xhr.responseText);
+				else if (opts.dataType == 'xml') {
+					if (!xhr.responseXML) {
+						var xmlDoc = doc.XMLDocument ? doc.XMLDocument : doc;
+						if (xmlDoc && xmlDoc.documentElement && xmlDoc.documentElement.tagName != 'parsererror') {
+							xhr.responseXML = xmlDoc;
+						}
+					}
+					if (!xhr.responseXML && xhr.responseText != null) {
+						xhr.responseXML = toXml(xhr.responseText);
+					}
 				}
 				data = $.httpData(xhr, opts.dataType);
 			}
@@ -351,9 +359,9 @@ $.fn.ajaxSubmit = function(options) {
 				return null;
 			}
 
-			// Defensive validation: reject unsafe markup constructs before parsing.
+			// Defensive validation: reject unsafe or HTML-like markup constructs before parsing.
 			// This prevents reinterpreting attacker-controlled DOM text as active markup.
-			if (/(<!DOCTYPE|<!ENTITY|<\?|\<script\b)/i.test(s)) {
+			if (/(<!DOCTYPE|<!ENTITY|<\?|<script\b|<html\b|<body\b)/i.test(s)) {
 				return null;
 			}
 
