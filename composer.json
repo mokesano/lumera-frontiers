@@ -1,5 +1,5 @@
 {
-    "name": "lumera/lumera-frontiers",
+    "name": "lumera/lumera-frontedge",
     "description": "Lumera Frontedge - Modern Publisher Platform for Journal Management Framework Workflow and Publishing",
     "type": "project",
     "license": "GPL-3.0-only",
@@ -11,9 +11,9 @@
     ],
     "homepage": "https://lumera.sangia.org/",
     "support": {
-        "issues": "https://github.com/mokesano/lumera-frontiers/issues",
+        "issues": "https://github.com/mokesano/lumera-frontedge/issues",
         "forum": "https://forum.lumera.sangia.org/",
-        "source": "https://github.com/mokesano/lumera-frontiers"
+        "source": "https://github.com/mokesano/lumera-frontedge"
     },
     "authors": [
         {
